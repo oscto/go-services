@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"os"
 	"strings"
+	"time"
 
 	"errors"
 
@@ -22,11 +23,12 @@ import (
 func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *pb.CallResponse) error {
 
 	uri := strings.Split(request.Url, "/")
+	path := fmt.Sprintf("%s/", time.Now().Format("20060102"))
 	if err := Download(request.Url, path, uri[len(uri)-1]); err != nil {
 		return err
 	}
 
-	filePath := fmt.Sprintf("%s/%s", path, uri[len(uri)-1])
+	filePath := fmt.Sprintf("%s%s/%s", rootPath, path, uri[len(uri)-1])
 	file, err := os.Open(filePath)
 	defer file.Close()
 	if err != nil {
@@ -54,7 +56,7 @@ func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *p
 
 	newImg := resize.Resize(uint(request.Width), uint(request.Height), img, resize.Lanczos3)
 
-	newFile, err := os.Create(fmt.Sprintf("%s/new_%s", path, uri[len(uri)-1]))
+	newFile, err := os.Create(fmt.Sprintf("%s%s/new_%s", rootPath, path, uri[len(uri)-1]))
 	defer newFile.Close()
 	if err != nil {
 		return err
@@ -78,7 +80,7 @@ func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *p
 		return err
 	}
 
-	response.Path = fmt.Sprintf("/new_%s", uri[len(uri)-1])
+	response.Path = fmt.Sprintf("/%s/new_%s", path, uri[len(uri)-1])
 
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"os"
 	"strings"
+	"time"
 
 	"golang.org/x/image/bmp"
 	pb "image.oscto.icu/proto"
@@ -17,6 +18,7 @@ import (
 func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.DrawResponse) error {
 
 	uri := strings.Split(request.Url, "/")
+	path := fmt.Sprintf("%s/", time.Now().Format("20060102"))
 	if err := Download(request.Url, path, uri[len(uri)-1]); err != nil {
 		return err
 	}
@@ -25,7 +27,7 @@ func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.
 	if err != nil {
 		return err
 	}
-	newFile := fmt.Sprintf("%s/new-%s", path, uri[len(uri)-1])
+	newFile := fmt.Sprintf("%s%s/new-%s", rootPath, path, uri[len(uri)-1])
 	out, err := os.Create(newFile)
 	defer out.Close()
 	if err != nil {
@@ -79,6 +81,6 @@ func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.
 		subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.YCbCr)
 		return jpeg.Encode(out, subImg, nil)
 	}
-	response.Path = fmt.Sprintf("/new_%s", uri[len(uri)-1])
+	response.Path = fmt.Sprintf("/%snew_%s", path, uri[len(uri)-1])
 	return nil
 }

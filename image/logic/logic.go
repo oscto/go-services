@@ -13,7 +13,8 @@ type Logic struct {
 }
 
 var (
-	path string
+	rootPath = "/"
+	filePath = "tmp"
 )
 
 func Register() *Logic {
@@ -34,21 +35,21 @@ func FileTypeGet(filePath string) (string, error) {
 	return fileType, nil
 }
 
-func Download(url, path, filename string) error {
+func Download(url, filepath, filename string) error {
 
-	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+	if err := os.MkdirAll(fmt.Sprintf("%s%s%s", rootPath, filePath, filepath), os.ModePerm); err != nil {
 		return err
 	}
 
 	var res *http.Response
 	var err error
 	if strings.Contains(url, "https") {
-		tlr := &http.Transport{
+		tls := &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
 			},
 		}
-		client := &http.Client{Transport: tlr}
+		client := &http.Client{Transport: tls}
 		res, err = client.Get(url)
 	} else {
 		res, err = http.Get(url)
@@ -62,7 +63,7 @@ func Download(url, path, filename string) error {
 		return err
 	}
 	defer res.Body.Close()
-	if err = ioutil.WriteFile(fmt.Sprintf(`%v/%v`, path, filename), data, 0777); err != nil {
+	if err = ioutil.WriteFile(fmt.Sprintf("%s%s%s%s", rootPath, filePath, filepath, filename), data, 0777); err != nil {
 		return err
 	}
 

@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	service = "image"
-	version = "latest"
+	service = "image.oscto.icu"
+	version = "v0.0.1"
 )
 
 func main() {
