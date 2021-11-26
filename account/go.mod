@@ -69,4 +69,4 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
 
-replace github.com/oscto/ky3k => /data/project/golang/src/ky3k
+//replace github.com/oscto/ky3k => /data/project/golang/src/ky3k
