@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package image;
+
+option go_package = "./proto;image";
+
+service Image {
+	rpc Resize(CallRequest) returns (CallResponse) {}
+	rpc Draw(DrawRequest) returns (DrawResponse) {}
+	rpc ToWebP(ToWebPRequest) returns (ToWebPResponse) {}
+}
+
+message CallRequest {
+	string url = 1;
+	int64 width = 2;
+	int64 height = 3;
+}
+message CallResponse {
+	string path = 1;
+}
+
+message DrawRequest {
+	string url = 1;
+	int64 x0 = 2;
+	int64 y0 = 3;
+	int64 x1 = 4;
+	int64 y1 = 5;
+}
+message DrawResponse {
+	string path = 1;
+}
+
+message ToWebPRequest {
+	string url = 1;
+}
+message ToWebPResponse {
+	string path = 1;
+}
+
