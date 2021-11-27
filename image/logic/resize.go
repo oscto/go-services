@@ -23,7 +23,7 @@ import (
 func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *pb.CallResponse) error {
 
 	uri := strings.Split(request.Url, "/")
-	path := fmt.Sprintf("%s/", time.Now().Format("20060102"))
+	path := fmt.Sprintf("/%s", time.Now().Format("20060102"))
 	if err := Download(request.Url, path, uri[len(uri)-1]); err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *p
 		return err
 	}
 
-	response.Path = fmt.Sprintf("/%s/new_%s", path, uri[len(uri)-1])
+	response.Path = fmt.Sprintf("%s/new_%s", path, uri[len(uri)-1])
 
 	return nil
 }

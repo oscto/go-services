@@ -22,12 +22,12 @@ import (
 func (l *Logic) ToWebP(ctx context.Context, request *pb.ToWebPRequest, response *pb.ToWebPResponse) error {
 
 	uri := strings.Split(request.Url, "/")
-	path := fmt.Sprintf("%s/", time.Now().Format("20060102"))
+	path := fmt.Sprintf("/%s", time.Now().Format("20060102"))
 	if err := Download(request.Url, path, uri[len(uri)-1]); err != nil {
 		return err
 	}
 
-	filename := fmt.Sprintf("%s%s/new-%s", rootPath, path, uri[len(uri)-1])
+	filename := fmt.Sprintf("%s%s/%s", rootPath, path, uri[len(uri)-1])
 	file, err := os.Open(filename)
 	defer file.Close()
 	if err != nil {
@@ -48,7 +48,7 @@ func (l *Logic) ToWebP(ctx context.Context, request *pb.ToWebPRequest, response 
 	default:
 		img, err = jpeg.Decode(file)
 	}
-	newFile := fmt.Sprintf("%s%s/new-%s", rootPath, path, uri[len(uri)-1])
+	newFile := fmt.Sprintf("%s%s/new-%s.webp", rootPath, path, uri[len(uri)-1])
 	out, err := os.Create(newFile)
 	defer out.Close()
 	if err != nil {
@@ -63,7 +63,7 @@ func (l *Logic) ToWebP(ctx context.Context, request *pb.ToWebPRequest, response 
 		return err
 	}
 
-	response.Path = fmt.Sprintf("%s/new-%s", path, uri[len(uri)-1])
+	response.Path = fmt.Sprintf("%s/new-%s.webp", path, uri[len(uri)-1])
 
 	return nil
 }

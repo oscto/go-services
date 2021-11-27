@@ -13,8 +13,8 @@ type Logic struct {
 }
 
 var (
-	rootPath = "/"
-	filePath = "tmp"
+	rootPath = "/tmp"
+	filePath = "/image"
 )
 
 func Register() *Logic {

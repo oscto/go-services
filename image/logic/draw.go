@@ -18,11 +18,12 @@ import (
 func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.DrawResponse) error {
 
 	uri := strings.Split(request.Url, "/")
-	path := fmt.Sprintf("%s/", time.Now().Format("20060102"))
+	path := fmt.Sprintf("/%s", time.Now().Format("20060102"))
 	if err := Download(request.Url, path, uri[len(uri)-1]); err != nil {
 		return err
 	}
-	in, err := os.Open(request.Url)
+	filePath := fmt.Sprintf("%s%s/%s", rootPath, path, uri[len(uri)-1])
+	in, err := os.Open(filePath)
 	defer in.Close()
 	if err != nil {
 		return err
@@ -81,6 +82,6 @@ func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.
 		subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.YCbCr)
 		return jpeg.Encode(out, subImg, nil)
 	}
-	response.Path = fmt.Sprintf("/%snew_%s", path, uri[len(uri)-1])
+	response.Path = fmt.Sprintf("%s/new_%s", path, uri[len(uri)-1])
 	return nil
 }
