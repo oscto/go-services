@@ -15,7 +15,7 @@ import (
 
 var (
 	service = "http"
-	version = "latest"
+	version = "v0.0.1"
 	address = ":8090"
 )
 

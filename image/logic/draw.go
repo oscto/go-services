@@ -22,13 +22,13 @@ func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.
 	if err := Download(request.Url, path, uri[len(uri)-1]); err != nil {
 		return err
 	}
-	filePath := fmt.Sprintf("%s%s/%s", rootPath, path, uri[len(uri)-1])
-	in, err := os.Open(filePath)
+	oldFile := fmt.Sprintf("%s%s%s/%s", rootPath, filePath, path, uri[len(uri)-1])
+	in, err := os.Open(oldFile)
 	defer in.Close()
 	if err != nil {
 		return err
 	}
-	newFile := fmt.Sprintf("%s%s/new-%s", rootPath, path, uri[len(uri)-1])
+	newFile := fmt.Sprintf("%s%s%s/new-%s", rootPath, filePath, path, uri[len(uri)-1])
 	out, err := os.Create(newFile)
 	defer out.Close()
 	if err != nil {
@@ -63,25 +63,26 @@ func (l *Logic) Draw(ctx context.Context, request *pb.DrawRequest, response *pb.
 		case *image.NRGBA:
 			img := canvas.(*image.NRGBA)
 			subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.NRGBA)
-			return png.Encode(out, subImg)
+			err = png.Encode(out, subImg)
 		case *image.RGBA:
 			img := canvas.(*image.RGBA)
 			subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.RGBA)
-			return png.Encode(out, subImg)
+			err = png.Encode(out, subImg)
 		}
 	case "gif":
 		img := canvas.(*image.Paletted)
 		subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Paletted)
-		return gif.Encode(out, subImg, &gif.Options{})
+		err = gif.Encode(out, subImg, &gif.Options{})
 	case "bmp":
 		img := canvas.(*image.RGBA)
 		subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.RGBA)
-		return bmp.Encode(out, subImg)
+		err = bmp.Encode(out, subImg)
 	default:
 		img := canvas.(*image.YCbCr)
 		subImg := img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.YCbCr)
-		return jpeg.Encode(out, subImg, nil)
+		err = jpeg.Encode(out, subImg, nil)
 	}
-	response.Path = fmt.Sprintf("%s/new_%s", path, uri[len(uri)-1])
-	return nil
+
+	response.Path = fmt.Sprintf("%s%s/new_%s", filePath, path, uri[len(uri)-1])
+	return err
 }

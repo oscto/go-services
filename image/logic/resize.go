@@ -28,14 +28,14 @@ func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *p
 		return err
 	}
 
-	filePath := fmt.Sprintf("%s%s/%s", rootPath, path, uri[len(uri)-1])
-	file, err := os.Open(filePath)
+	oldFile := fmt.Sprintf("%s%s%s/%s", rootPath, filePath, path, uri[len(uri)-1])
+	file, err := os.Open(oldFile)
 	defer file.Close()
 	if err != nil {
 		return err
 	}
 	var img image.Image
-	fileType, err := FileTypeGet(filePath)
+	fileType, err := FileTypeGet(oldFile)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *p
 
 	newImg := resize.Resize(uint(request.Width), uint(request.Height), img, resize.Lanczos3)
 
-	newFile, err := os.Create(fmt.Sprintf("%s%s/new_%s", rootPath, path, uri[len(uri)-1]))
+	newFile, err := os.Create(fmt.Sprintf("%s%s%s/new_%s", rootPath, filePath, path, uri[len(uri)-1]))
 	defer newFile.Close()
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func (l *Logic) Resize(ctx context.Context, request *pb.CallRequest, response *p
 		return err
 	}
 
-	response.Path = fmt.Sprintf("%s/new_%s", path, uri[len(uri)-1])
+	response.Path = fmt.Sprintf("%s%s/new_%s", filePath, path, uri[len(uri)-1])
 
 	return nil
 }

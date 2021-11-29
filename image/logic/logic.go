@@ -23,6 +23,7 @@ func Register() *Logic {
 
 func FileTypeGet(filePath string) (string, error) {
 
+	fmt.Println("filePath", filePath)
 	file, err := os.Open(filePath)
 	defer file.Close()
 	buffer := make([]byte, 512)
@@ -63,7 +64,7 @@ func Download(url, filepath, filename string) error {
 		return err
 	}
 	defer res.Body.Close()
-	if err = ioutil.WriteFile(fmt.Sprintf("%s%s%s%s", rootPath, filePath, filepath, filename), data, 0777); err != nil {
+	if err = ioutil.WriteFile(fmt.Sprintf("%s%s%s/%s", rootPath, filePath, filepath, filename), data, 0777); err != nil {
 		return err
 	}
 
