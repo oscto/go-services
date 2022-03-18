@@ -13,7 +13,7 @@ type Logic struct {
 }
 
 var (
-	rootPath = "/tmp"
+	rootPath = "/data/project/public_html/metaspaces.icu/"
 	filePath = "/image"
 )
 
@@ -23,7 +23,6 @@ func Register() *Logic {
 
 func FileTypeGet(filePath string) (string, error) {
 
-	fmt.Println("filePath", filePath)
 	file, err := os.Open(filePath)
 	defer file.Close()
 	buffer := make([]byte, 512)

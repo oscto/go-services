@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"runtime"
 
 	"go-micro.dev/v4/registry"
 	"go-micro.dev/v4/server"
@@ -20,6 +22,20 @@ var (
 )
 
 func main() {
+
+	runtime.GOMAXPROCS(10)
+	go func() {
+		fmt.Println("hello world")
+	}()
+
+	go func() {
+		for {
+			fmt.Println("aaaa")
+			//	time.Sleep(time.Duration(1) * time.Second)
+		}
+	}()
+
+	select {}
 
 	srv := httpServer.NewServer(
 		server.Name(service),
